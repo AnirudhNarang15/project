@@ -35,7 +35,6 @@ function finding(err,res,html){
 
 function staff(branch,name,qualification,email,exp,research,public,inter){
     let staffmem={
-        Branch:branch,
         Name:name,
         Qualification:qualification,
         Email:email,
