@@ -34,7 +34,9 @@ function finding(err,res,html){
     
 
 function staff(branch,name,qualification,email,exp,research,public,inter){
-    let staffmem={
+    let dirPath=branch;
+    let  staff={
+        Branch:branch,
         Name:name,
         Qualification:qualification,
         Email:email,
@@ -43,35 +45,36 @@ function staff(branch,name,qualification,email,exp,research,public,inter){
         National_Publications:public,
         International_Publications:inter
     }
-    if (fs.existsSync(branch)) {
+    if (fs.existsSync(dirPath)) {
     }else{
-       fs.mkdirSync(branch);
+        fs.mkdirSync(dirPath);
     }
-    let teacherfilepath=path.join(branch,name+".xlsx");
- let pdata=[];
- if(fs.existsSync(teacherfilepath)){ 
-    pdata=excelreader(teacherfilepath,name);
-    pdata.push(staffmem);
- }else{
-     pdata=[staffmem];
-     console.log("File of teacher",teacherfilepath,"created");
- }
- excelwriter(teacherfilepath,pdata,name);
-}
-function excelreader(filepath,name){               
-    if(!fs.existsSync(filepath)){
-        return null;
+    let teacherFilePath= path.join(dirPath,name+".xlsx");
+    let pData=[];
+    if(fs.existsSync(teacherFilePath)){
+     pData=excelReader(teacherFilePath,name)
+     pData.push(staff);
     }else{
-         let wt=xlsx.readFile(filepath);
-         let exceldata=wt.Sheets[name];
-         let ans = xlsx.utils.sheet_to_json(exceldata);
-         return ans;
+    console.log("File of player",teacherFilePath,"created");
+    pData=[staff];
+    }
+    excelWriter(teacherFilePath,pData,name);
     }
     
-}
-function excelwriter(filepath,json,name){           
-    let newwb=xlsx.utils.book_new();
-    let newws=xlsx.utils.sheet_to_json(json);
-    xlsx.utils.book_append_sheet(newwb,newws,name);
-    xlsx.writeFile(newwb,filepath);
-}
+    function excelReader(filePath, name) {
+        if (!fs.existsSync(filePath)) {
+            return null;
+        } else{
+    let wt = xlsx.readFile(filePath);
+    let excelData = wt.Sheets[name];
+    let ans = xlsx.utils.sheet_to_json(excelData);
+    return ans;
+        }
+    }
+    function excelWriter(filePath, json, name) {
+        let newWB = xlsx.utils.book_new();
+        let newWS = xlsx.utils.json_to_sheet(json);
+        xlsx.utils.book_append_sheet(newWB, newWS, name); 
+        xlsx.writeFile(newWB, filePath);
+    }
+    
